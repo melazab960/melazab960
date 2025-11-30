@@ -1,30 +1,43 @@
-# 💫 About Me:
-backen django
+#### اضافة عميل جديد
+
+![](C:\Users\hp\Desktop\images\0.jpg)
+
+```python
+def save(self, *args, **kwargs):
+        self.slug = slugify(self.name)
+
+        
+        if self.pk:      # اذا كان المنتج موجود بالفعل 
+            try:
+                old_instance = Product.objects.get(pk=self.pk)    #  هات المنتج القديم   
+                if old_instance.brand != self.brand or old_instance.mainitem  != self.mainitem:    #  هل البراند والبند الرئيسي الجديد لا يساوي القديم معني كده حصل تعديل في ايهم 
+                   self.code = f"{self.mainitem.code}-{self.brand.code}-{old_instance.code_no}"   # سجل الكود مره تانية بالبيانات الجديدة
+
+            except Product.DoesNotExist:
+                pass
+        
+
+        elif not self.code:
+            last_product = Product.objects.filter(
+                mainitem=self.mainitem,
+                brand=self.brand
+            ).order_by('-id').first()
+
+            if last_product and last_product.code and last_product.code_no:
+                
+
+                next_number = int(last_product.code_no) + 1 
 
 
-# 💻 Tech Stack:
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54) ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
-# 📊 GitHub Stats:
-![](https://github-readme-stats.vercel.app/api?username=melazab960&theme=dark&hide_border=false&include_all_commits=false&count_private=false)<br/>
-![](https://nirzak-streak-stats.vercel.app/?user=melazab960&theme=dark&hide_border=false)<br/>
-![](https://github-readme-stats.vercel.app/api/top-langs/?username=melazab960&theme=dark&hide_border=false&include_all_commits=false&count_private=false&layout=compact)
+            else:
+                next_number = 1
 
----
-[![](https://visitcount.itsvg.in/api?id=melazab960&icon=0&color=0)](https://visitcount.itsvg.in)
+            self.code = f"{self.mainitem.code}-{self.brand.code}-{next_number}"
+            self.code_no=next_number
 
-<!-- Proudly created with GPRM ( https://gprm.itsvg.in ) -->## Hi there 👋
+        
+        
 
-<!--
-**melazab960/melazab960** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+        super().save(*args, **kwargs)
+```
 
-Here are some ideas to get you started:
-
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
